@@ -1,5 +1,6 @@
 # DNA-Process
 Calculate GC content, Dinucleotide, Trinucleotide and Ambiguous frequencies of fasta file.
+
 Download the dna-process binary file and run it in shell.
 
 
