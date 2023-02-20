@@ -4,7 +4,8 @@ Calculate GC content, Dinucleotide, Trinucleotide and Ambiguous frequencies of f
 Download the dna-process binary file and run it in shell.
 
 
-"################## HELP #########################"
+
+################## HELP #########################
 
 "This script can be used to find gc content, dinucleotide percent, trinucleotide percent, ambigious percent"
 
