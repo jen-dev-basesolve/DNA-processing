@@ -1,56 +1,46 @@
-# Read the file from user input
-file_name=input('Enter File name:')  # File input can further be improved using getopt.getopt()
-print('Loading...')
-
-#########################################
-# Help
-#########################################
-
-def help():
-    print ('Python script to calculate GC content')
-    print (' g - GC content \n h - Help')
-
-
-
 #########################################
 # GC content function
 #########################################
 
 def gc_content(file_name):
-    # Reading lines that don't start with '>'
+    import Bio
 
-    data=''                             # Creating and empty string
-    with open(file_name,'r') as file:
-        for line in file.readlines():
-            if not line.startswith('>'):
-                data=data+line.rstrip() # rstrip removes any whitespace
+    # Reading Fasta File
+    from Bio import SeqIO
+    sequence = [i for i in SeqIO.parse(file_name,'fasta')]
+    seq=''
+    for i in sequence:
+        seq+=i.seq.rstrip()
 
-    # Calculating number of G and C
-
-    gc_count=0
-    for i in data:
-        if i == 'C' or i == 'G':
-            gc_count=gc_count+1
-
-    print(f'The total count of GC content is: {gc_count}')
-    
-    # Total number of bases
-    seq_len=len(data)       
-
-    # GC percent
-    gc_per=round(100*(gc_count/seq_len),2)
-    print("The percentage of GC content is:",gc_per,"%")
-
+    # Calculating GC content
+    from Bio.SeqUtils import gc_fraction
+    bac=round(gc_fraction(seq)*100,2)
+    print(bac,'%')
 
 
 ############################################
 # Command Line Arguments
-############################################
+# click 
+##############################
 
-import sys
+import click
 
-for i in sys.argv:
-    if i=='g':
-        gc_content(file_name)
-    elif i=='h': 
-        help()
+@click.command()
+@click.option('-g', is_flag=True,help='Type -g to calculate GC content')		# is_flag is set to true, so when -g is mentioned, the code under it will run.
+@click.option('-d',is_flag=True)
+@click.option('-t',is_flag=True)
+@click.option('-n',is_flag=True)
+def data(g,d,t,n):
+    if g:
+        gc_content()
+    if d:
+        print('This is d')
+    if t:                               # elif is not used, because once elif is true, then python stops interpreting
+        print('This is t')
+    if n:
+        print('This is n')
+    else:
+        print('error')
+
+if __name__=='__main__':
+    data()
