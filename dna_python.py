@@ -5,12 +5,11 @@ import click
 
 # GC content function
 
-def gc_content(file_name):
+def gc_content(sequence):
     print()
     print('The GC content is..')
 
-    # Reading Fasta File
-    sequence = [i for i in SeqIO.parse(file_name,'fasta')]      # Parsing fasta file and storing each sequence inside a list
+    
     seq=''
     for i in sequence:
         seq+=i.seq.rstrip()                                     # Remove trailing white space
@@ -22,15 +21,13 @@ def gc_content(file_name):
 
 # Dinucleotide content
 
-def di_nuc(f):
+def di_nuc(sequence):
     print()
     print('Dinucleotide frequencies..')
     
-    # Parse fasta file
-    seq_lines = [i for i in SeqIO.parse(f,'fasta')]
-
+    
     seq=''
-    for i in seq_lines:
+    for i in sequence:
         seq+=i.seq.rstrip()
 
     AA=round(100*seq.count_overlap('AA')/len(seq),2)            # count_overlap method counts AA in a sequence. overlap method count 3 for AA in 'AAA', whereas only .count method counts 1 AA for 'AAA'.
@@ -47,15 +44,12 @@ def di_nuc(f):
 
 # Trinucleotide content
 
-def tri_nuc(f):
+def tri_nuc(sequence):
     print()
     print('Trinucleotide frequencies..')
-    
-    # Parse fasta file
-    seq_lines = [i for i in SeqIO.parse(f,'fasta')]
 
     seq=''
-    for i in seq_lines:
+    for i in sequence:
         seq+=i.seq.rstrip()
 
     AAA=round(100*seq.count_overlap('AAA')/len(seq),2)            # count_overlap method counts AA in a sequence. overlap method count 3 for AA in 'AAA', whereas only .count method counts 1 AA for 'AAA'.
@@ -72,15 +66,12 @@ def tri_nuc(f):
 
 # Ambiguous Frequency
 
-def ambi(f):
+def ambi(sequence):
     print()
     print('Ambiguous frequencies..')
-    
-    # Parse fasta file
-    seq_lines = [i for i in SeqIO.parse(f,'fasta')]
 
     seq=''
-    for i in seq_lines:
+    for i in sequence:
         seq+=i.seq.rstrip()
 
     NN=round(100*seq.count_overlap('N')/len(seq),2)
@@ -107,14 +98,17 @@ def data(g,d,t,n,filename):
     Filename
 
     """
+    # Reading Fasta File
+    sequence = [i for i in SeqIO.parse(filename,'fasta')]      # Parsing fasta file and storing each sequence inside a list
+
     if g:
-        gc_content(filename)
+        gc_content(sequence)
     if d:
-        di_nuc(filename)
+        di_nuc(sequence)
     if t:                           # elif is not used, because once elif is true python stops interpreting further conditions
-        tri_nuc(filename)
+        tri_nuc(sequence)
     if n:
-        ambi(filename)
+        ambi(sequence)
     
 
 if __name__=='__main__':            # execute data() when the file is run directly and is not imported
