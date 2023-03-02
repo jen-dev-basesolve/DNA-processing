@@ -11,8 +11,8 @@ gc_count <- function(filename)
 {
   # read.fasta{seqinr} : pares fasta file into biostrings, similar to lists
   samfa <- read.fasta(file=filename)	# File should be in current working directory
-  # compute_GC{LncFinder} : Compute GC count, with overlaping
-  compute_GC(samfa)		# parallel.cores=2 uses two cores for computation, takes less time.
+  gcContent <- compute_GC(samfa)
+  print(gcContent*100)
 }
 
 
@@ -32,7 +32,7 @@ dinuc_freq <- function(data,tot_nucs)
   cc <- vcountPattern(subject=data,pattern="CC",max.mismatch = 0)
   cc <- 100*sum(cc)/tot_nucs
   
-  
+  cat("\n")
   cat("AA",aa,"% \n")
   cat("TT",tt,"% \n")
   cat("GG",gg,"% \n")
