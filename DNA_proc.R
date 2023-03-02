@@ -12,19 +12,13 @@ gc_count <- function(filename)
   # read.fasta{seqinr} : pares fasta file into biostrings, similar to lists
   samfa <- read.fasta(file=filename)	# File should be in current working directory
   # compute_GC{LncFinder} : Compute GC count, with overlaping
-  compute_GC(samfa,parallel.cores = 2)		# parallel.cores=2 uses two cores for computation, takes less time.
+  compute_GC(samfa)		# parallel.cores=2 uses two cores for computation, takes less time.
 }
 
+
 # Dinucleotide frequency function
-dinuc_freq <- function(data)
+dinuc_freq <- function(data,tot_nucs)
 {
-  # calculate total number of nucleotides in fasta file
-  tot_nucs=0
-  for ( i in 1:length(data))
-  {
-    tot_nucs=tot_nucs+length(data[[i]])
-  }
-  
   # vcountPattern{Biostrings} : count pattern over multiple xstrings
   aa <- vcountPattern(subject=data,pattern="AA",max.mismatch = 0)
   aa <- 100*sum(aa)/tot_nucs
@@ -46,13 +40,8 @@ dinuc_freq <- function(data)
 }
 
 # Trinucleotide frequency
-trinuc_freq <- function(data)
+trinuc_freq <- function(data,tot_nucs)
 {
-  tot_nucs=0
-  for ( i in 1:length(data))
-  {
-    tot_nucs=tot_nucs+length(data[[i]])
-  }
   
   aa <- vcountPattern(subject=data,pattern="AAA",max.mismatch = 0)
   aa <- 100*sum(aa)/tot_nucs
@@ -66,7 +55,7 @@ trinuc_freq <- function(data)
   cc <- vcountPattern(subject=data,pattern="CCC",max.mismatch = 0)
   cc <- 100*sum(cc)/tot_nucs
   
-  
+  cat("\n")
   cat("AAA",aa,"% \n")
   cat("TTT",tt,"% \n")
   cat("GGG",gg,"% \n")
@@ -74,18 +63,12 @@ trinuc_freq <- function(data)
 }
 
 # Ambiguous frequency
-ambi_freq <- function(data)
+ambi_freq <- function(data,tot_nucs)
 {
-  tot_nucs=0
-  for ( i in 1:length(data))
-  {
-    tot_nucs=tot_nucs+length(data[[i]])
-  }
-  
-  n <- vcountPattern(subject=data,pattern="N",max.mismatch = 0)
-  n <- 100*sum(n)/tot_nucs
-  
-  cat("N",n,"% \n")
+  nn <- vcountPattern(subject=data,pattern="N",max.mismatch = 0)
+  nn <- 100*sum(nn)/tot_nucs
+  cat("\n")
+  cat("N",nn,"% \n")
 }
 
 
@@ -104,7 +87,7 @@ main <- function(){
                 help="Calculate Dinucleotide Frequencies"),
     make_option(c("-t", "--tri_nuc"), action="store_true", default=FALSE,
                 help="Calculate Trinucleotide Frequencies"),
-    make_option(c("-n", "--ambiguous"), action="store_true", default=FALSE,
+    make_option(c("-a","--ambiguous"), action="store_true", default=FALSE,
                 help="Calculate Ambiguous nucleotide Frequencies")
   )
   # parse_args : A method to analysize cli option and take appropiate action
@@ -112,10 +95,17 @@ main <- function(){
   opt <- parse_args(OptionParser(option_list=option_list))
   
   # parsing fasta file to Xstrings 
-  data <- readDNAStringSet(filepath = "MonkeyPox.fasta", format="fasta")
+  data <- readDNAStringSet(filepath = opt$f, format="fasta")
+
+  # calculate total number of nucleotides in fasta file
+  tot_nucs=0
+  for ( i in 1:length(data))
+  {
+    tot_nucs=tot_nucs+length(data[[i]])
+  }
   
   # command line conditions
-  
+
   if (is.null(opt$f)){
     print("ERROR, please enter Filename")
   }
@@ -125,15 +115,15 @@ main <- function(){
   }
   
   if (opt$d){
-    dinuc_freq(data)
+    dinuc_freq(data,tot_nucs)
   }
   
   if (opt$t){
-    trinuc_freq(data)
+    trinuc_freq(data,tot_nucs)
   }
   
-  if (opt$n){
-    ambi_freq(data)
+  if (opt$a){
+    ambi_freq(data,tot_nucs)
   }
   
 }
