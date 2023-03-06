@@ -1,0 +1,23 @@
+Bootstrap: docker
+From: ubuntu
+
+%post
+    apt-get -y update
+
+    apt-get install bc -y
+    apt-get install wget -y
+    apt-get install -y lsb-release
+    # apt install liblapack-dev libopenblas-dev
+    apt-get install python3 -y
+    apt-get install python3-pip -y
+    pip install Bio==1.5.5
+    pip install click==8.1.3
+    
+    apt install --no-install-recommends software-properties-common dirmngr -y
+    wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc
+    apt-get install software-properties-common -y
+    add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/"
+    DEBIAN_FRONTEND=noninteractive apt -y install --no-install-recommends r-base
+    R -e 'install.packages("stringi")'
+    R -e 'if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager") ; BiocManager::install("Biostrings") ; install.packages("seqinr")'
+    R -e 'install.packages("LncFinder") ; install.packages("optparse")'
